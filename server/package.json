@@ -1,0 +1,22 @@
+{
+  "name": "quiz-server",
+  "version": "1.0.0",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "node --watch ./bin/www",
+    "test": "node --test",
+    "create-admin": "node scripts/createAdmin.js",
+    "seed": "node scripts/seedDemo.js",
+    "demo": "node scripts/setupDemo.js"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^9.0.0"
+  }
+}

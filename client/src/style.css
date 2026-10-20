@@ -1,0 +1,99 @@
+:root { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: #212529; background: #fff; font-synthesis: none; }
+body { margin: 0; min-width: 320px; background: #fff; color: #212529; font-size: 22px; }
+a { color: #307bff; }
+.btn { font-size: 22px; padding: 9px 18px; border-radius: 5px; }
+.btn-primary { --bs-btn-bg: #307bff; --bs-btn-border-color: #307bff; --bs-btn-hover-bg: #2269df; --bs-btn-hover-border-color: #2269df; --bs-btn-active-bg: #1e60ce; --bs-btn-active-border-color: #1e60ce; }
+.form-control { min-height: 54px; font-size: 22px; border-color: #ced4da; border-radius: 5px; padding: 10px 16px; }
+.form-control:focus { border-color: #86b7fe; box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .25); }
+.alert { font-size: 18px; }
+.loading-screen { padding: 48px; text-align: center; }
+.auth-shell { min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 164px 20px 20px; }
+.auth-card { width: 430px; max-width: 100%; padding: 30px 28px; border: 1px solid #d7d7d7; border-radius: 6px; }
+.auth-card h1 { margin: 0 0 94px; text-align: center; font-size: 28px; line-height: 34px; font-weight: 600; }
+.auth-field { margin-bottom: 24px; }
+.auth-field label { display: block; margin-bottom: 10px; }
+.password-input-wrap { position: relative; }
+.password-input-wrap input { padding-right: 54px; }
+.password-input-wrap input::-ms-reveal { display: none; }
+.auth-card .password-toggle { position: absolute; top: 50%; right: 14px; transform: translateY(-50%); display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; background: transparent; color: #212529; visibility: hidden; }
+.password-input-wrap:focus-within .password-toggle { visibility: visible; }
+.auth-card .btn { width: 100%; }
+.auth-switch { display: block; margin-top: 24px; text-align: center; text-decoration: none; white-space: nowrap; }
+.auth-switch:hover { text-decoration: underline; }
+.dashboard-shell { width: 91%; margin: 0 auto; padding: 38px 0 40px; }
+.dashboard-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.dashboard-header h1 { margin: 0; font-size: 56px; line-height: 1.2; font-weight: 600; }
+.dashboard-header p { margin: 0; padding-right: 2px; white-space: nowrap; }
+.dashboard-nav { display: flex; flex-wrap: wrap; gap: 30px; margin-top: 44px; min-height: 82px; padding: 23px 60px; align-items: center; background: #f8f9fa; }
+.dashboard-nav a, .dashboard-nav button { padding: 0; border: 0; background: transparent; color: #808080; font: inherit; text-decoration: none; line-height: 36px; }
+.dashboard-nav .home-link { color: #171717; }
+.dashboard-nav a:hover, .dashboard-nav button:hover { color: #212529; }
+.dashboard-content { padding-top: 76px; }
+.quiz-screen { text-align: center; }
+.quiz-screen > h2, .quiz-completed h2 { margin: 0 0 14px; font-size: 44px; line-height: 1.2; font-weight: 600; }
+.question-step { width: max-content; max-width: 100%; margin: 0 auto; text-align: left; }
+.question-step h3 { margin: 0 0 12px; font-size: 40px; line-height: 1.2; font-weight: 600; }
+.quiz-options { border: 0; padding: 0; margin: 0; }
+.quiz-option { display: flex; align-items: baseline; gap: 11px; min-height: 35px; line-height: 35px; cursor: pointer; }
+.quiz-option input { width: 18px; height: 18px; margin: 0; accent-color: #808080; flex-shrink: 0; }
+.question-step .btn { margin-top: 34px; }
+.quiz-completed { text-align: center; }
+.quiz-completed p { margin: 14px 0 24px; }
+.quiz-selection { max-width: 750px; margin: 0 auto; }
+.quiz-selection h2 { font-size: 38px; }
+.quiz-selection .list-group-item { padding: 20px; }
+.question-management { padding: 0 16px; margin-top: -38px; }
+.question-management > h2 { font-size: 38px; font-weight: 600; margin-bottom: 10px; }
+.question-editor { border: 1px solid #d9d9d9; border-radius: 4px; padding: 22px; margin-bottom: 30px; }
+.question-field { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 20px; align-items: start; margin-bottom: 20px; }
+.question-field > label { padding-top: 10px; }
+.question-options-editor { display: grid; gap: 10px; }
+.question-editor .btn-primary { width: 100%; }
+.question-editor .edit-actions { display: flex; gap: 12px; }
+.question-list { padding: 0; margin: 0; list-style: none; border: 1px solid #d9d9d9; border-radius: 4px; overflow: hidden; }
+.question-list > li { padding: 22px 26px 16px; border-bottom: 1px solid #dedede; }
+.question-list > li:last-child { border-bottom: 0; }
+.question-list h3 { margin: 0 0 8px; font-size: 38px; font-weight: 600; }
+.question-list ul { margin: 0 0 20px; padding-left: 54px; list-style-type: disc; }
+.question-actions { display: flex; }
+.question-actions .btn { padding: 10px 18px; }
+.question-actions .btn-warning { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.question-actions .btn-danger { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.questions-shell { width: 84%; padding-top: 30px; font-size: 20px; }
+.questions-shell .dashboard-header h1 { font-size: 50px; }
+.questions-shell .dashboard-nav { min-height: 74px; padding: 19px 56px; }
+.questions-shell .dashboard-content { padding-top: 72px; }
+.questions-shell .question-field { grid-template-columns: 170px minmax(0, 1fr); }
+.questions-shell .form-control { min-height: 50px; font-size: 20px; padding: 8px 14px; }
+.questions-shell .btn { font-size: 20px; padding: 8px 16px; }
+.questions-shell .question-list h3 { font-size: 36px; }
+.quiz-editor-page { max-width: 1050px; margin: -38px auto 0; }
+.quiz-editor-page h2, .article-page h2 { font-size: 38px; }
+.quiz-editor-page .question-picker { display: grid; gap: 8px; margin: 16px 0; }
+.quiz-editor-page .question-picker label { display: flex; gap: 12px; align-items: baseline; }
+.quiz-editor-page .list-group-item { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.article-page { padding: 0 16px; margin-top: -38px; }
+.article-entry { padding: 24px; margin-bottom: 20px; border: 1px solid #d9d9d9; border-radius: 4px; }
+.article-entry h3 { font-size: 32px; }
+.article-content { white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 767px) {
+  body { font-size: 18px; }
+  .btn, .form-control { font-size: 18px; }
+  .auth-shell { padding-top: 70px; }
+  .auth-card h1 { margin-bottom: 60px; }
+  .auth-switch { white-space: normal; }
+  .dashboard-shell, .questions-shell { width: 92%; padding-top: 28px; }
+  .dashboard-header { align-items: flex-start; gap: 12px; }
+  .dashboard-header h1, .questions-shell .dashboard-header h1 { font-size: 36px; }
+  .dashboard-header p { font-size: 16px; padding-top: 10px; white-space: normal; }
+  .dashboard-nav, .questions-shell .dashboard-nav { margin-top: 28px; min-height: 64px; padding: 14px 20px; gap: 12px 22px; }
+  .dashboard-content, .questions-shell .dashboard-content { padding-top: 44px; }
+  .question-step h3, .question-list h3, .questions-shell .question-list h3 { font-size: 28px; }
+  .quiz-screen > h2, .quiz-completed h2 { font-size: 34px; }
+  .question-management, .quiz-editor-page, .article-page { margin-top: -15px; padding: 0; }
+  .question-field, .questions-shell .question-field { grid-template-columns: 1fr; gap: 8px; }
+  .question-field > label { padding-top: 0; }
+  .question-editor { padding: 18px; }
+  .question-list > li { padding: 20px; }
+  .question-list ul { padding-left: 30px; }
+}

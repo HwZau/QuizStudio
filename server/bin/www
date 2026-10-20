@@ -1,0 +1,59 @@
+#!/usr/bin/env node
+
+require('dotenv').config();
+
+const http = require('node:http');
+const app = require('../app');
+const { connectDatabase } = require('../src/config/database');
+
+const port = normalizePort(process.env.PORT || '4000');
+app.set('port', port);
+
+const server = http.createServer(app);
+server.on('error', onError);
+server.on('listening', onListening);
+
+async function start() {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is required. Copy .env.example to .env and set a secret.');
+  }
+  await connectDatabase();
+  server.listen(port);
+}
+
+function normalizePort(value) {
+  const parsedPort = Number.parseInt(value, 10);
+
+  if (Number.isNaN(parsedPort)) return value;
+  if (parsedPort >= 0) return parsedPort;
+  return false;
+}
+
+function onError(error) {
+  if (error.syscall !== 'listen') throw error;
+
+  const bind = typeof port === 'string' ? `Pipe ${port}` : `Port ${port}`;
+  switch (error.code) {
+    case 'EACCES':
+      console.error(`${bind} requires elevated privileges.`);
+      process.exitCode = 1;
+      break;
+    case 'EADDRINUSE':
+      console.error(`${bind} is already in use.`);
+      process.exitCode = 1;
+      break;
+    default:
+      throw error;
+  }
+}
+
+function onListening() {
+  const address = server.address();
+  const bind = typeof address === 'string' ? address : address.port;
+  console.log(`SimpleQuiz API listening on http://localhost:${bind}`);
+}
+
+start().catch((error) => {
+  console.error('Could not start SimpleQuiz API:', error);
+  process.exitCode = 1;
+});
