@@ -72,6 +72,67 @@ test('username login and uniqueness ignore case while preserving spelling and pa
   assert.deepEqual(registrations.map((result) => result.status).sort(), [201, 409]);
 });
 
+test('only existing admins can create accounts with admin privileges', async () => {
+  const password = 'AccountCreation123!';
+  const learner = await request('POST', '/auth/register', {
+    username: 'account-reader', password, admin: true
+  });
+  assert.equal(learner.status, 201);
+  assert.equal(learner.body.user.admin, false);
+  const alias = await request('POST', '/users/signup', {
+    username: 'account-signup', password, admin: true
+  });
+  assert.equal(alias.status, 201);
+  assert.equal(alias.body.user.admin, false);
+
+  const owner = await request('POST', '/auth/register', {
+    username: 'account-owner', password
+  });
+  await User.findByIdAndUpdate(owner.body.user._id, { admin: true });
+  const adminLogin = await request('POST', '/auth/login', { username: 'account-owner', password });
+  const adminToken = adminLogin.body.token;
+  const payload = { username: 'Created.Admin', password, admin: true };
+
+  assert.equal((await request('POST', '/users', payload)).status, 401);
+  assert.equal((await request('POST', '/users', payload, 'invalid-token')).status, 401);
+  assert.equal((await request('POST', '/users', payload, learner.body.token)).status, 403);
+  assert.equal(await User.countDocuments({ username: payload.username }), 0);
+  assert.equal((await request('POST', '/users', { ...payload, password: 'short' }, adminToken)).status, 400);
+  for (const admin of ['true', 'false', 1, null]) {
+    assert.equal((await request('POST', '/users', { ...payload, admin }, adminToken)).status, 400);
+  }
+
+  const created = await request('POST', '/users', payload, adminToken);
+  assert.equal(created.status, 201);
+  assert.equal(created.body.user.username, payload.username);
+  assert.equal(created.body.user.admin, true);
+  assert.equal(Object.hasOwn(created.body.user, 'password'), false);
+  assert.equal(Object.hasOwn(created.body.user, 'passwordHash'), false);
+  assert.equal(Object.hasOwn(created.body, 'token'), false);
+  const newAdmin = await request('POST', '/auth/login', {
+    username: 'created.admin', password
+  });
+  assert.equal(newAdmin.status, 200);
+  assert.equal(newAdmin.body.user.admin, true);
+  assert.equal((await request('GET', '/questions', undefined, newAdmin.body.token)).status, 200);
+  assert.equal((await request('POST', '/users', {
+    ...payload, username: 'CREATED.ADMIN'
+  }, adminToken)).status, 409);
+
+  const regular = await request('POST', '/users', {
+    username: 'created-learner', password
+  }, adminToken);
+  assert.equal(regular.status, 201);
+  assert.equal(regular.body.user.admin, false);
+  const regularLogin = await request('POST', '/auth/login', {
+    username: 'created-learner', password
+  });
+  assert.equal(regularLogin.status, 200);
+  assert.equal((await request('GET', '/questions', undefined, regularLogin.body.token)).status, 403);
+  const unchangedOwner = await request('GET', '/auth/me', undefined, adminToken);
+  assert.equal(unchangedOwner.body._id, owner.body.user._id);
+});
+
 test('login, admin CRUD, quiz play and server grading', async () => {
   const learner = await request('POST', '/auth/register', {
     username: 'learner', password: 'password123', admin: true

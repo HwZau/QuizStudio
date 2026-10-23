@@ -30,6 +30,16 @@ async function register(req, res) {
   res.status(201).json({ user: safeUser(user), token: tokenFor(user) });
 }
 
+async function createUser(req, res) {
+  const { username, password } = validateCredentials(req.body);
+  if (req.body.admin !== undefined && typeof req.body.admin !== 'boolean') {
+    throw new HttpError(400, 'admin must be a boolean.');
+  }
+  const passwordHash = await bcrypt.hash(password, 12);
+  const user = await User.create({ username, passwordHash, admin: req.body.admin === true });
+  res.status(201).json({ user: safeUser(user) });
+}
+
 async function login(req, res) {
   const username = typeof req.body?.username === 'string' ? req.body.username.trim() : '';
   const password = typeof req.body?.password === 'string' ? req.body.password : '';
@@ -49,4 +59,4 @@ async function listUsers(_req, res) {
   res.json(users);
 }
 
-module.exports = { register, login, me, listUsers };
+module.exports = { register, createUser, login, me, listUsers };

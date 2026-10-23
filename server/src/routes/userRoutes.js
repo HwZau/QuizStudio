@@ -4,6 +4,7 @@ const { verifyUser, verifyAdmin } = require('../middleware/authenticate');
 
 const router = express.Router();
 router.get('/', verifyUser, verifyAdmin, controller.listUsers);
+router.post('/', verifyUser, verifyAdmin, controller.createUser);
 router.post('/signup', controller.register);
 router.post('/login', controller.login);
 

@@ -66,6 +66,7 @@ Gửi `Content-Type: application/json` khi có JSON body. Các route cần đăn
 | --- | --- | --- |
 | POST | `/api/auth/register`, `/api/auth/login` | Công khai |
 | GET | `/api/auth/me` | Đăng nhập |
+| GET / POST | `/api/users` | Admin: xem danh sách / tạo tài khoản |
 | GET | `/api/quizzes`, `/api/quizzes/:quizId` | Đăng nhập |
 | POST | `/api/quizzes/:quizId/submit` | Đăng nhập |
 | POST | `/api/quizzes` | Admin |
@@ -77,6 +78,18 @@ Gửi `Content-Type: application/json` khi có JSON body. Các route cần đăn
 | PUT / DELETE | `/api/articles/:articleId` | Admin |
 
 Các route cũ `/api/users/signup`, `/api/users/login` và `/api/question` vẫn được hỗ trợ.
+
+Tạo admin qua Postman: đăng nhập bằng admin hiện có tại `POST /api/auth/login`, lấy `token`, rồi gửi `POST /api/users` với `Authorization: Bearer <token>` và JSON body:
+
+```json
+{
+  "username": "adminnew",
+  "password": "your-new-admin-password",
+  "admin": true
+}
+```
+
+API trả `201` với `{ "user": { "_id": "...", "username": "adminnew", "admin": true } }`. Sau đó đăng nhập bằng tài khoản mới để lấy token của tài khoản đó. Request tạo tài khoản không thay token của admin đang thực hiện. Bỏ `admin` hoặc gửi `false` để tạo user thường; giá trị không phải boolean trả `400`. Chưa đăng nhập trả `401`, user thường trả `403`, trùng username (kể cả khác hoa/thường) trả `409`. API đăng ký công khai vẫn luôn tạo user thường. Admin đầu tiên được tạo bằng script `create-admin`.
 
 | Thao tác | JSON body |
 | --- | --- |
