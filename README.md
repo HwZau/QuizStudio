@@ -79,7 +79,7 @@ Gửi `Content-Type: application/json` khi có JSON body. Các route cần đăn
 
 Các route cũ `/api/users/signup`, `/api/users/login` và `/api/question` vẫn được hỗ trợ.
 
-Tạo admin qua Postman: đăng nhập bằng admin hiện có tại `POST /api/auth/login`, lấy `token`, rồi gửi `POST /api/users` với `Authorization: Bearer <token>` và JSON body:
+Tạo admin qua Postman: gửi `POST /api/auth/register` (hoặc `/api/users/signup`) với Authorization là **No Auth**, Content-Type là `application/json` và JSON body:
 
 ```json
 {
@@ -89,7 +89,9 @@ Tạo admin qua Postman: đăng nhập bằng admin hiện có tại `POST /api/
 }
 ```
 
-API trả `201` với `{ "user": { "_id": "...", "username": "adminnew", "admin": true } }`. Sau đó đăng nhập bằng tài khoản mới để lấy token của tài khoản đó. Request tạo tài khoản không thay token của admin đang thực hiện. Bỏ `admin` hoặc gửi `false` để tạo user thường; giá trị không phải boolean trả `400`. Chưa đăng nhập trả `401`, user thường trả `403`, trùng username (kể cả khác hoa/thường) trả `409`. API đăng ký công khai vẫn luôn tạo user thường. Admin đầu tiên được tạo bằng script `create-admin`.
+API trả `201` với `{ "user": { "_id": "...", "username": "adminnew", "admin": true }, "token": "..." }`. Dùng ngay token này để gọi API quản trị, không cần đăng nhập trước khi đăng ký. Bỏ `admin` hoặc gửi `false` để tạo user thường; giá trị không phải boolean (ví dụ `"true"`) trả `400`. Username trùng (kể cả khác hoa/thường) trả `409` và không thay đổi quyền hay mật khẩu của tài khoản đã có. Theo cấu hình bài tập được yêu cầu, bất kỳ ai gọi API đăng ký cũng có thể tự tạo admin bằng `admin: true`.
+
+`POST /api/users` vẫn là API tạo tài khoản dành cho admin đã đăng nhập, trả `{ "user": { ... } }` và không cấp token của tài khoản mới. API này yêu cầu Bearer token; thiếu token trả `401`, user thường trả `403`. Script `create-admin` vẫn có thể dùng để tạo hoặc cập nhật tài khoản admin từ terminal.
 
 | Thao tác | JSON body |
 | --- | --- |
@@ -99,7 +101,7 @@ API trả `201` với `{ "user": { "_id": "...", "username": "adminnew", "admin"
 | Nộp bài | `{ "answers": { "<questionId>": 0 } }` |
 | Tạo bài viết | `{ "title": "Title", "content": "Article content" }` |
 
-Đăng ký/đăng nhập trả `{ user, token }`; đăng ký luôn tạo người dùng thường. Username không phân biệt chữ hoa/thường: `John`, `john` và `JOHN` là cùng một tài khoản; đăng ký tên chỉ khác hoa/thường trả 409. Giao diện vẫn hiển thị cách viết username đã lưu. Quy tắc này cũng áp dụng cho script tạo admin và dữ liệu demo. Mật khẩu được băm bằng bcrypt và vẫn phân biệt chữ hoa/thường. Quiz của người dùng thường không chứa `correctAnswerIndex`; server trả `score`, `total` và `review` sau khi nộp.
+Đăng ký/đăng nhập trả `{ user, token }`; đăng ký nhận trường `admin` kiểu boolean và mặc định là `false`. Form Register trên giao diện không gửi trường này nên vẫn tạo user thường. Username không phân biệt chữ hoa/thường: `John`, `john` và `JOHN` là cùng một tài khoản; đăng ký tên chỉ khác hoa/thường trả 409. Giao diện vẫn hiển thị cách viết username đã lưu. Quy tắc này cũng áp dụng cho script tạo admin và dữ liệu demo. Mật khẩu được băm bằng bcrypt và vẫn phân biệt chữ hoa/thường. Quiz của người dùng thường không chứa `correctAnswerIndex`; server trả `score`, `total` và `review` sau khi nộp.
 
 Bài viết yêu cầu title dạng chuỗi không rỗng, tối đa 200 ký tự, content dạng chuỗi không rỗng. Author lấy từ tài khoản đăng nhập. PUT cho phép cập nhật một hoặc cả hai trường; GET danh sách trả mảng sắp theo thời gian tạo. POST trả 201; GET/PUT trả 200; DELETE trả 204 không có body.
 

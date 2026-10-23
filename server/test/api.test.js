@@ -72,23 +72,58 @@ test('username login and uniqueness ignore case while preserving spelling and pa
   assert.deepEqual(registrations.map((result) => result.status).sort(), [201, 409]);
 });
 
-test('only existing admins can create accounts with admin privileges', async () => {
+test('public registration accepts a boolean admin role without prior authentication', async () => {
+  const password = 'PublicRegistration123!';
+  for (const [index, path] of ['/auth/register', '/users/signup'].entries()) {
+    for (const [label, fields, expectedAdmin] of [
+      ['admin', { admin: true }, true],
+      ['learner', { admin: false }, false],
+      ['default', {}, false]
+    ]) {
+      const username = `signup-${index}-${label}`;
+      const created = await request('POST', path, { username, password, ...fields });
+      assert.equal(created.status, 201);
+      assert.equal(created.body.user.admin, expectedAdmin);
+      assert.equal(Object.hasOwn(created.body.user, 'password'), false);
+      assert.equal(Object.hasOwn(created.body.user, 'passwordHash'), false);
+      assert.ok(created.body.token);
+      const me = await request('GET', '/auth/me', undefined, created.body.token);
+      assert.equal(me.status, 200);
+      assert.equal(me.body.admin, expectedAdmin);
+      assert.equal(me.body._id, created.body.user._id);
+      assert.equal((await request('GET', '/questions', undefined, created.body.token)).status,
+        expectedAdmin ? 200 : 403);
+      const login = await request('POST', '/auth/login', { username: username.toUpperCase(), password });
+      assert.equal(login.status, 200);
+      assert.equal(login.body.user.admin, expectedAdmin);
+      assert.equal(login.body.user._id, created.body.user._id);
+    }
+    for (const admin of ['true', 'false', 1, null]) {
+      assert.equal((await request('POST', path, {
+        username: `invalid-role-${index}`, password, admin
+      })).status, 400);
+    }
+    const duplicate = await request('POST', path, {
+      username: `SIGNUP-${index}-LEARNER`, password, admin: true
+    });
+    assert.equal(duplicate.status, 409);
+    const unchanged = await request('POST', '/auth/login', {
+      username: `signup-${index}-learner`, password
+    });
+    assert.equal(unchanged.body.user.admin, false);
+  }
+});
+
+test('the users management endpoint requires admin authentication', async () => {
   const password = 'AccountCreation123!';
   const learner = await request('POST', '/auth/register', {
-    username: 'account-reader', password, admin: true
+    username: 'account-reader', password
   });
   assert.equal(learner.status, 201);
   assert.equal(learner.body.user.admin, false);
-  const alias = await request('POST', '/users/signup', {
-    username: 'account-signup', password, admin: true
-  });
-  assert.equal(alias.status, 201);
-  assert.equal(alias.body.user.admin, false);
-
   const owner = await request('POST', '/auth/register', {
-    username: 'account-owner', password
+    username: 'account-owner', password, admin: true
   });
-  await User.findByIdAndUpdate(owner.body.user._id, { admin: true });
   const adminLogin = await request('POST', '/auth/login', { username: 'account-owner', password });
   const adminToken = adminLogin.body.token;
   const payload = { username: 'Created.Admin', password, admin: true };
@@ -135,14 +170,13 @@ test('only existing admins can create accounts with admin privileges', async () 
 
 test('login, admin CRUD, quiz play and server grading', async () => {
   const learner = await request('POST', '/auth/register', {
-    username: 'learner', password: 'password123', admin: true
+    username: 'learner', password: 'password123'
   });
   const admin = await request('POST', '/auth/register', {
-    username: 'admin', password: 'password123'
+    username: 'admin', password: 'password123', admin: true
   });
   assert.equal(learner.status, 201);
   assert.equal(learner.body.user.admin, false);
-  await User.findByIdAndUpdate(admin.body.user._id, { admin: true });
   const adminLogin = await request('POST', '/auth/login', {
     username: 'admin', password: 'password123'
   });
@@ -204,9 +238,8 @@ test('articles require login, restrict writes to admins and validate data', asyn
     username: 'article-reader', password: 'password123'
   });
   const admin = await request('POST', '/auth/register', {
-    username: 'article-editor', password: 'password123'
+    username: 'article-editor', password: 'password123', admin: true
   });
-  await User.findByIdAndUpdate(admin.body.user._id, { admin: true });
   const adminToken = admin.body.token;
   const learnerToken = learner.body.token;
   const payload = { title: 'Quiz guide', content: 'Choose one answer for each question.' };

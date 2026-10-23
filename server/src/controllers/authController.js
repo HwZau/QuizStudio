@@ -23,20 +23,22 @@ function validateCredentials(body) {
   return { username, password };
 }
 
-async function register(req, res) {
-  const { username, password } = validateCredentials(req.body);
+async function createAccount(body) {
+  const { username, password } = validateCredentials(body);
+  if (body.admin !== undefined && typeof body.admin !== 'boolean') {
+    throw new HttpError(400, 'admin must be a boolean.');
+  }
   const passwordHash = await bcrypt.hash(password, 12);
-  const user = await User.create({ username, passwordHash, admin: false });
+  return User.create({ username, passwordHash, admin: body.admin === true });
+}
+
+async function register(req, res) {
+  const user = await createAccount(req.body);
   res.status(201).json({ user: safeUser(user), token: tokenFor(user) });
 }
 
 async function createUser(req, res) {
-  const { username, password } = validateCredentials(req.body);
-  if (req.body.admin !== undefined && typeof req.body.admin !== 'boolean') {
-    throw new HttpError(400, 'admin must be a boolean.');
-  }
-  const passwordHash = await bcrypt.hash(password, 12);
-  const user = await User.create({ username, passwordHash, admin: req.body.admin === true });
+  const user = await createAccount(req.body);
   res.status(201).json({ user: safeUser(user) });
 }
 
