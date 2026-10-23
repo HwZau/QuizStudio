@@ -29,6 +29,17 @@ a { color: #307bff; }
 .dashboard-nav .home-link { color: #171717; }
 .dashboard-nav a:hover, .dashboard-nav button:hover { color: #212529; }
 .dashboard-content { padding-top: 76px; }
+.dashboard-overview > h2 { margin: 0 0 12px; font-size: 38px; font-weight: 600; }
+.dashboard-introduction { margin: 0 0 28px; color: #596168; font-size: 20px; }
+.dashboard-feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+.dashboard-feature-card { display: flex; flex-direction: column; padding: 28px; border: 1px solid #d9d9d9; border-radius: 6px; }
+.dashboard-feature-card h3 { margin: 0 0 14px; font-size: 28px; font-weight: 600; }
+.dashboard-feature-card p, .dashboard-feature-card li { font-size: 18px; line-height: 1.6; }
+.dashboard-feature-card p { margin: 0 0 16px; color: #596168; }
+.dashboard-feature-card ul { margin: 0 0 28px; padding-left: 22px; }
+.dashboard-feature-card li + li { margin-top: 8px; }
+.dashboard-feature-card .btn { align-self: flex-start; margin-top: auto; font-size: 20px; }
+.dashboard-feature-card .btn:focus-visible { outline: 3px solid #212529; outline-offset: 4px; }
 .quiz-screen { text-align: center; }
 .quiz-screen > h2, .quiz-completed h2 { margin: 0 0 14px; font-size: 44px; line-height: 1.2; font-weight: 600; }
 .question-step { width: max-content; max-width: 100%; margin: 0 auto; text-align: left; }
@@ -88,6 +99,12 @@ a { color: #307bff; }
   .dashboard-header p { font-size: 16px; padding-top: 10px; white-space: normal; }
   .dashboard-nav, .questions-shell .dashboard-nav { margin-top: 28px; min-height: 64px; padding: 14px 20px; gap: 12px 22px; }
   .dashboard-content, .questions-shell .dashboard-content { padding-top: 44px; }
+  .dashboard-overview > h2 { font-size: 30px; }
+  .dashboard-introduction { font-size: 18px; }
+  .dashboard-feature-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .dashboard-feature-card { padding: 22px; }
+  .dashboard-feature-card h3 { font-size: 25px; }
+  .dashboard-feature-card .btn { font-size: 18px; }
   .question-step h3, .question-list h3, .questions-shell .question-list h3 { font-size: 28px; }
   .quiz-screen > h2, .quiz-completed h2 { font-size: 34px; }
   .question-management, .quiz-editor-page, .article-page { margin-top: -15px; padding: 0; }

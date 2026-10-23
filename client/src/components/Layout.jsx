@@ -26,6 +26,7 @@ export default function Layout({ admin = false }) {
         <Link className="home-link" to={admin ? '/admin' : '/dashboard'}>Home</Link>
         {admin ? <>
           <Link to="/admin/questions">Manage Questions</Link>
+          <Link to="/admin/quizzes">Manage Quizzes</Link>
           <Link to="/admin/articles">Manage Articles</Link>
         </> : <>
           <Link to="/dashboard/quiz">Quiz</Link>

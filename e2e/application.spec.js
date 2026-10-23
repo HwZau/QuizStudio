@@ -90,7 +90,7 @@ test('learner takes five questions one at a time, gets score 4 and restarts', as
   await expect(page.getByText('Welcome, John', { exact: true })).toBeVisible();
   await page.goto(baseUrl + '/admin/questions');
   await expect(page).toHaveURL(baseUrl + '/dashboard');
-  await page.getByRole('link', { name: 'Quiz', exact: true }).click();
+  await page.getByRole('link', { name: 'Start Quiz', exact: true }).click();
   for (let index = 0; index < demoQuestions.length; index += 1) {
     const question = demoQuestions[index];
     await expect(page.getByRole('heading', { name: question.text, exact: true })).toBeVisible();
@@ -115,9 +115,9 @@ test('admin lands on its dashboard and creates, edits and deletes questions', as
   await login(page, 'Mary');
   await expect(page).toHaveURL(baseUrl + '/admin');
   await expect(page.getByRole('heading', { name: 'Admin Dashboard', exact: true })).toBeVisible();
-  await expect(page.locator('nav')).toHaveText('HomeManage QuestionsManage ArticlesLogout');
+  await expect(page.locator('nav')).toHaveText('HomeManage QuestionsManage QuizzesManage ArticlesLogout');
   await page.screenshot({ path: testInfo.outputPath('admin.png') });
-  await page.getByRole('link', { name: 'Manage Questions', exact: true }).click();
+  await page.getByRole('link', { name: 'Open question manager', exact: true }).click();
   await expect(page.locator('.question-list > li')).toHaveCount(5);
   await expect(page.locator('.question-options-editor input')).toHaveCount(4);
   await page.screenshot({ path: testInfo.outputPath('questions.png'), fullPage: true });
@@ -144,7 +144,7 @@ test('admin lands on its dashboard and creates, edits and deletes questions', as
 
 test('quiz management retains create, update and delete behavior', async ({ page }) => {
   await login(page, 'Mary');
-  await page.goto(baseUrl + '/admin/quizzes');
+  await page.getByRole('link', { name: 'Open quiz manager', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Quizzes', exact: true })).toBeVisible();
   await page.getByLabel('Title:', { exact: true }).fill('Temporary Quiz');
   await page.getByLabel('Description:', { exact: true }).fill('Temporary description');
@@ -164,7 +164,7 @@ test('quiz management retains create, update and delete behavior', async ({ page
 
 test('article CRUD is available to admin and learners can read it', async ({ page, browser }, testInfo) => {
   await login(page, 'Mary');
-  await page.getByRole('link', { name: 'Manage Articles', exact: true }).click();
+  await page.getByRole('link', { name: 'Open article manager', exact: true }).click();
   await page.getByLabel('Title:', { exact: true }).fill('How to take a quiz');
   await page.getByLabel('Content:', { exact: true }).fill('Choose one answer.\nThen submit your answer.');
   await page.getByRole('button', { name: 'Add Article', exact: true }).click();
@@ -180,7 +180,7 @@ test('article CRUD is available to admin and learners can read it', async ({ pag
   const learner = await context.newPage();
   try {
     await login(learner, 'John');
-    await learner.getByRole('link', { name: 'Article', exact: true }).click();
+    await learner.getByRole('link', { name: 'Browse Articles', exact: true }).click();
     await expect(learner.getByRole('heading', { name: 'Quiz instructions', exact: true })).toBeVisible();
     await expect(learner.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
     await expect(learner.getByRole('button', { name: 'Delete', exact: true })).toHaveCount(0);
